@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDFラベルメーカー</title>
+  <style>
+    /* 全体: 余計な装飾をせず、読みやすさだけを整える */
+    body {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px 16px;
+      font-family: system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0 0 20px;
+    }
+
+    /* 入力項目のまとまり */
+    fieldset {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 0 0 16px;
+      padding: 12px 16px;
+    }
+
+    legend {
+      padding: 0 4px;
+      font-weight: bold;
+    }
+
+    /* ラベル名と入力欄を2列ずつ並べる */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+    }
+
+    /* 項目名が長い欄は1行に1項目ずつ並べる */
+    .rows label + label {
+      margin-top: 8px;
+    }
+
+    label {
+      display: block;
+    }
+
+    input[type="number"] {
+      width: 6em;
+      padding: 4px;
+      font-size: 15px;
+    }
+
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 6px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>PDFラベルメーカー</h1>
+
+  <!-- 印字するテキスト（改行はそのまま反映する） -->
+  <fieldset>
+    <legend>テキスト</legend>
+    <textarea id="text" rows="4" placeholder="ラベルに印字する内容を入力"></textarea>
+  </fieldset>
+
+  <!-- 用紙の余白（単位: mm） -->
+  <fieldset>
+    <legend>用紙の余白（mm）</legend>
+    <div class="grid">
+      <label>上 <input type="number" id="marginTop" value="10" min="0" step="0.1"></label>
+      <label>下 <input type="number" id="marginBottom" value="10" min="0" step="0.1"></label>
+      <label>左 <input type="number" id="marginLeft" value="10" min="0" step="0.1"></label>
+      <label>右 <input type="number" id="marginRight" value="10" min="0" step="0.1"></label>
+    </div>
+  </fieldset>
+
+  <!-- ラベル1枚の大きさ（単位: mm） -->
+  <fieldset>
+    <legend>ラベルのサイズ（mm）</legend>
+    <div class="grid">
+      <label>幅 <input type="number" id="labelWidth" value="60" min="0" step="0.1"></label>
+      <label>高さ <input type="number" id="labelHeight" value="30" min="0" step="0.1"></label>
+    </div>
+  </fieldset>
+
+  <!-- ラベル同士の間隔（単位: mm） -->
+  <fieldset>
+    <legend>ラベル間の余白（mm）</legend>
+    <div class="grid">
+      <label>横 <input type="number" id="gapX" value="5" min="0" step="0.1"></label>
+      <label>縦 <input type="number" id="gapY" value="5" min="0" step="0.1"></label>
+    </div>
+  </fieldset>
+
+  <!-- 文字の見た目に関する設定 -->
+  <fieldset>
+    <legend>文字と枠線</legend>
+    <div class="rows">
+      <label>内側の余白（mm） <input type="number" id="padding" value="2" min="0" step="0.1"></label>
+      <label>文字サイズ（pt） <input type="number" id="fontSize" value="12" min="4" step="0.1"></label>
+      <label><input type="checkbox" id="showBorder"> 枠線を印字する</label>
+    </div>
+  </fieldset>
+
+  <!-- クリック時の処理は未実装 -->
+  <button type="button" id="createButton">PDFを作成</button>
+</body>
+</html>
