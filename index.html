@@ -70,7 +70,29 @@
       font-size: 16px;
       cursor: pointer;
     }
+
+    button:disabled {
+      cursor: not-allowed;
+    }
+
+    /* ボタンの下に出すお知らせ（読み込み中・エラー・警告） */
+    #status {
+      min-height: 1.5em;
+      margin: 8px 0 0;
+      /* 複数のエラーを改行して表示する */
+      white-space: pre-line;
+    }
+
+    #status.error {
+      color: #c00;
+    }
+
+    #status.warning {
+      color: #a60;
+    }
   </style>
+  <!-- jsPDF（JavaScript で PDF を作成するライブラリ）。バージョンは固定 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.2.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <h1>PDFラベルメーカー</h1>
@@ -120,7 +142,238 @@
     </div>
   </fieldset>
 
-  <!-- クリック時の処理は未実装 -->
-  <button type="button" id="createButton">PDFを作成</button>
+  <!-- フォントを読み込み終わるまでは押せない -->
+  <button type="button" id="createButton" disabled>PDFを作成</button>
+  <p id="status" role="status"></p>
+
+  <script>
+    // ===== 定数 =====
+
+    // A4 用紙の大きさ（mm）
+    const PAPER_WIDTH = 210;
+    const PAPER_HEIGHT = 297;
+
+    // 1pt を mm に換算した値
+    const PT_TO_MM = 25.4 / 72;
+
+    // 行の高さ（文字サイズに対する倍率）
+    const LINE_HEIGHT_RATIO = 1.2;
+
+    // 自動で小さくするときの文字サイズの下限（pt）
+    const MIN_FONT_SIZE = 4;
+
+    // 日本語フォント（BIZ UDゴシック）の取得元と、jsPDF に登録するときの名前
+    const FONT_URL = 'https://cdn.jsdelivr.net/gh/google/fonts@01ac47e0b1cddbc298334c69a5dfafb0205ffa28/ofl/bizudgothic/BIZUDGothic-Regular.ttf';
+    const FONT_FILE_NAME = 'BIZUDGothic-Regular.ttf';
+    const FONT_NAME = 'BIZUDGothic';
+
+    const createButton = document.getElementById('createButton');
+    const statusText = document.getElementById('status');
+
+    // 読み込んだフォントの Base64 文字列（PDF を作るたびに使い回す）
+    let fontBase64 = null;
+
+    // ===== 画面表示 =====
+
+    // ボタン下のお知らせを表示する（type: 'info' / 'error' / 'warning'）
+    function showStatus(message, type = 'info') {
+      statusText.textContent = message;
+      statusText.className = type;
+    }
+
+    // ===== フォントの読み込み =====
+
+    // バイナリデータを Base64 文字列に変換する
+    function arrayBufferToBase64(buffer) {
+      const bytes = new Uint8Array(buffer);
+      // 一度に大量の引数を渡すとエラーになるため、区切って文字列にする
+      const chunkSize = 0x8000;
+      let binary = '';
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+      }
+      return btoa(binary);
+    }
+
+    // ページを開いた時点でフォントを読み込み、終わったらボタンを押せるようにする
+    async function loadFont() {
+      showStatus('フォント読み込み中…');
+      try {
+        if (!window.jspdf) {
+          throw new Error('jsPDF を読み込めませんでした');
+        }
+        const response = await fetch(FONT_URL);
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        fontBase64 = arrayBufferToBase64(await response.arrayBuffer());
+        createButton.disabled = false;
+        showStatus('');
+      } catch (error) {
+        console.error(error);
+        showStatus('読み込みに失敗しました。インターネット接続を確認して、ページを再読み込みしてください。', 'error');
+      }
+    }
+
+    // ===== 入力値の読み取りとチェック =====
+
+    // 入力欄の値を読み取る。問題があれば errors にメッセージを入れて返す
+    function readSettings() {
+      const errors = [];
+
+      // 数値の欄を読み取る（空欄・数値以外・マイナスはエラー）
+      function readNumber(id, name) {
+        const raw = document.getElementById(id).value.trim();
+        const value = Number(raw);
+        if (raw === '' || !Number.isFinite(value) || value < 0) {
+          errors.push(`「${name}」には 0 以上の数値を入力してください`);
+          return NaN;
+        }
+        return value;
+      }
+
+      const settings = {
+        text: document.getElementById('text').value,
+        marginTop: readNumber('marginTop', '余白（上）'),
+        marginBottom: readNumber('marginBottom', '余白（下）'),
+        marginLeft: readNumber('marginLeft', '余白（左）'),
+        marginRight: readNumber('marginRight', '余白（右）'),
+        labelWidth: readNumber('labelWidth', 'ラベルの幅'),
+        labelHeight: readNumber('labelHeight', 'ラベルの高さ'),
+        gapX: readNumber('gapX', 'ラベル間の余白（横）'),
+        gapY: readNumber('gapY', 'ラベル間の余白（縦）'),
+        padding: readNumber('padding', '内側の余白'),
+        fontSize: readNumber('fontSize', '文字サイズ'),
+        showBorder: document.getElementById('showBorder').checked,
+      };
+
+      // 数値として読めた欄についてだけ、追加のチェックをする
+      if (settings.labelWidth === 0 || settings.labelHeight === 0) {
+        errors.push('ラベルの幅と高さには 0 より大きい値を入力してください');
+      }
+      if (settings.fontSize >= 0 && settings.fontSize < MIN_FONT_SIZE) {
+        errors.push(`文字サイズは ${MIN_FONT_SIZE}pt 以上にしてください`);
+      }
+      if (settings.padding * 2 >= settings.labelWidth || settings.padding * 2 >= settings.labelHeight) {
+        errors.push('内側の余白が大きすぎて、文字を置く場所がありません');
+      }
+      if (settings.text.trim() === '') {
+        errors.push('テキストを入力してください');
+      }
+
+      return { settings, errors };
+    }
+
+    // ===== 寸法の計算（プレビューと PDF で共通に使う） =====
+
+    // 列数・行数と、各ラベルの左上の位置（mm）を計算する
+    function calculateLayout(settings) {
+      const usableWidth = PAPER_WIDTH - settings.marginLeft - settings.marginRight;
+      const usableHeight = PAPER_HEIGHT - settings.marginTop - settings.marginBottom;
+
+      // 小数の計算誤差で 1 枚少なくならないよう、わずかに足してから切り捨てる
+      const epsilon = 1e-9;
+      const cols = Math.max(0, Math.floor((usableWidth + settings.gapX) / (settings.labelWidth + settings.gapX) + epsilon));
+      const rows = Math.max(0, Math.floor((usableHeight + settings.gapY) / (settings.labelHeight + settings.gapY) + epsilon));
+
+      const positions = [];
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          positions.push({
+            x: settings.marginLeft + col * (settings.labelWidth + settings.gapX),
+            y: settings.marginTop + row * (settings.labelHeight + settings.gapY),
+          });
+        }
+      }
+
+      return { cols, rows, positions };
+    }
+
+    // ===== PDF の作成 =====
+
+    // テキストがラベルの内側に収まる文字サイズ（pt）を求める
+    // 戻り値の fits が false のときは、下限の文字サイズでも収まらない
+    function fitFontSize(doc, lines, areaWidth, areaHeight, maxFontSize) {
+      // 上限の文字サイズで、一番長い行の幅（mm）を測る
+      doc.setFontSize(maxFontSize);
+      const widestLine = Math.max(...lines.map((line) => doc.getTextWidth(line)));
+
+      // 文字の幅と高さは文字サイズに比例するので、比率で収まるサイズを計算する
+      const sizeByWidth = widestLine > 0 ? maxFontSize * areaWidth / widestLine : maxFontSize;
+      const sizeByHeight = areaHeight / (lines.length * LINE_HEIGHT_RATIO * PT_TO_MM);
+      const size = Math.min(maxFontSize, sizeByWidth, sizeByHeight);
+
+      if (size < MIN_FONT_SIZE) {
+        return { size: MIN_FONT_SIZE, fits: false };
+      }
+      return { size, fits: true };
+    }
+
+    // 入力内容から PDF を作り、labels.pdf として保存する
+    function createPdf() {
+      const { settings, errors } = readSettings();
+      if (errors.length > 0) {
+        showStatus(errors.join('\n'), 'error');
+        return;
+      }
+
+      const layout = calculateLayout(settings);
+      if (layout.positions.length === 0) {
+        showStatus('ラベルが用紙に収まりません', 'error');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+      // 日本語フォントを登録して使う（登録は PDF ごとに必要）
+      doc.addFileToVFS(FONT_FILE_NAME, fontBase64);
+      doc.addFont(FONT_FILE_NAME, FONT_NAME, 'normal');
+      doc.setFont(FONT_NAME, 'normal');
+
+      // 改行で行に分ける。末尾の余分な改行は、中央揃えがずれないように取り除く
+      const lines = settings.text.replace(/(\r?\n)+$/, '').split(/\r?\n/);
+
+      // 全ラベルが同じ内容なので、文字サイズは 1 回だけ計算する
+      const areaWidth = settings.labelWidth - settings.padding * 2;
+      const areaHeight = settings.labelHeight - settings.padding * 2;
+      const fit = fitFontSize(doc, lines, areaWidth, areaHeight, settings.fontSize);
+      doc.setFontSize(fit.size);
+      const lineHeight = fit.size * LINE_HEIGHT_RATIO * PT_TO_MM;
+
+      // 枠線は細い灰色の線にする
+      doc.setDrawColor(160);
+      doc.setLineWidth(0.1);
+
+      for (const { x, y } of layout.positions) {
+        if (settings.showBorder) {
+          doc.rect(x, y, settings.labelWidth, settings.labelHeight);
+        }
+
+        // ラベルの中心を基準に、複数行をまとめて上下左右の中央にそろえる
+        const centerX = x + settings.labelWidth / 2;
+        const centerY = y + settings.labelHeight / 2;
+        lines.forEach((line, index) => {
+          if (line === '') {
+            return;
+          }
+          const lineY = centerY + (index - (lines.length - 1) / 2) * lineHeight;
+          doc.text(line, centerX, lineY, { align: 'center', baseline: 'middle' });
+        });
+      }
+
+      doc.save('labels.pdf');
+
+      const summary = `${layout.cols}列 × ${layout.rows}行 = ${layout.positions.length}枚のラベルで PDF を作成しました`;
+      if (fit.fits) {
+        showStatus(summary);
+      } else {
+        showStatus(`${summary}。テキストが長すぎて、文字サイズ ${MIN_FONT_SIZE}pt でもラベルに収まりません`, 'warning');
+      }
+    }
+
+    createButton.addEventListener('click', createPdf);
+    loadFont();
+  </script>
 </body>
 </html>
