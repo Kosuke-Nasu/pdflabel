@@ -136,10 +136,10 @@
   <fieldset>
     <legend>用紙の余白（mm）</legend>
     <div class="grid">
-      <label>上 <input type="number" id="marginTop" value="10" min="0" step="0.1"></label>
-      <label>下 <input type="number" id="marginBottom" value="10" min="0" step="0.1"></label>
-      <label>左 <input type="number" id="marginLeft" value="10" min="0" step="0.1"></label>
-      <label>右 <input type="number" id="marginRight" value="10" min="0" step="0.1"></label>
+      <label>上 <input type="number" id="marginTop" value="10" min="0" step="0.01"></label>
+      <label>下 <input type="number" id="marginBottom" value="10" min="0" step="0.01"></label>
+      <label>左 <input type="number" id="marginLeft" value="10" min="0" step="0.01"></label>
+      <label>右 <input type="number" id="marginRight" value="10" min="0" step="0.01"></label>
     </div>
   </fieldset>
 
@@ -147,8 +147,8 @@
   <fieldset>
     <legend>ラベルのサイズ（mm）</legend>
     <div class="grid">
-      <label>幅 <input type="number" id="labelWidth" value="60" min="0" step="0.1"></label>
-      <label>高さ <input type="number" id="labelHeight" value="30" min="0" step="0.1"></label>
+      <label>幅 <input type="number" id="labelWidth" value="60" min="0" step="0.01"></label>
+      <label>高さ <input type="number" id="labelHeight" value="30" min="0" step="0.01"></label>
     </div>
   </fieldset>
 
@@ -156,8 +156,8 @@
   <fieldset>
     <legend>ラベル間の余白（mm）</legend>
     <div class="grid">
-      <label>横 <input type="number" id="gapX" value="5" min="0" step="0.1"></label>
-      <label>縦 <input type="number" id="gapY" value="5" min="0" step="0.1"></label>
+      <label>横 <input type="number" id="gapX" value="5" min="0" step="0.01"></label>
+      <label>縦 <input type="number" id="gapY" value="5" min="0" step="0.01"></label>
     </div>
   </fieldset>
 
@@ -165,7 +165,7 @@
   <fieldset>
     <legend>文字と枠線</legend>
     <div class="rows">
-      <label>内側の余白（mm） <input type="number" id="padding" value="2" min="0" step="0.1"></label>
+      <label>内側の余白（mm） <input type="number" id="padding" value="2" min="0" step="0.01"></label>
       <label>文字サイズ（pt） <input type="number" id="fontSize" value="12" min="4" step="0.1"></label>
       <label><input type="checkbox" id="showBorder"> 枠線を印字する</label>
     </div>
@@ -218,6 +218,338 @@
         id: 'a4-44', name: 'A4 44面',
         marginTop: 10.6, marginBottom: 10.6, marginLeft: 6.4, marginRight: 6.4,
         labelWidth: 48.3, labelHeight: 25.4, gapX: 0, gapY: 0,
+      },
+
+      // ----- エーワン（数値は公式サイトの寸法図より） -----
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72206
+      {
+        id: 'aone-72206', name: 'エーワン 72206 A4 6面 63×120mm',
+        marginTop: 23.5, marginBottom: 23.5, marginLeft: 10.5, marginRight: 10.5,
+        labelWidth: 63, labelHeight: 120, gapX: 0, gapY: 10,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72208
+      {
+        id: 'aone-72208', name: 'エーワン 72208 A4 8面 97×69mm',
+        marginTop: 10.5, marginBottom: 10.5, marginLeft: 8, marginRight: 8,
+        labelWidth: 97, labelHeight: 69, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72308
+      {
+        id: 'aone-72308', name: 'エーワン 72308 A4 8面 99.06×67.73mm',
+        marginTop: 13.04, marginBottom: 13.04, marginLeft: 4.67, marginRight: 4.67,
+        labelWidth: 99.06, labelHeight: 67.73, gapX: 2.54, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72210
+      {
+        id: 'aone-72210', name: 'エーワン 72210 A4 10面 86.4×50.8mm',
+        marginTop: 21.2, marginBottom: 21.8, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 50.8, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72212
+      {
+        id: 'aone-72212', name: 'エーワン 72212 A4 12面 86.4×42.3mm',
+        marginTop: 21.2, marginBottom: 22, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 42.3, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72218
+      {
+        id: 'aone-72218', name: 'エーワン 72218 A4 18面 63.5×46.5mm',
+        marginTop: 9, marginBottom: 9, marginLeft: 7.2, marginRight: 7.2,
+        labelWidth: 63.5, labelHeight: 46.5, gapX: 2.55, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72221
+      {
+        id: 'aone-72221', name: 'エーワン 72221 A4 21面 63.5×38.1mm',
+        marginTop: 15.15, marginBottom: 15.15, marginLeft: 7.2, marginRight: 7.2,
+        labelWidth: 63.5, labelHeight: 38.1, gapX: 2.55, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72224
+      {
+        id: 'aone-72224', name: 'エーワン 72224 A4 24面 66×33.9mm',
+        marginTop: 12.9, marginBottom: 12.9, marginLeft: 6, marginRight: 6,
+        labelWidth: 66, labelHeight: 33.9, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72524
+      {
+        id: 'aone-72524', name: 'エーワン 72524 A4 24面 64×33.86mm',
+        marginTop: 13.06, marginBottom: 13.06, marginLeft: 6.46, marginRight: 6.46,
+        labelWidth: 64, labelHeight: 33.86, gapX: 2.54, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72227
+      {
+        id: 'aone-72227', name: 'エーワン 72227 A4 27面 62×31mm',
+        marginTop: 9, marginBottom: 9, marginLeft: 9, marginRight: 9,
+        labelWidth: 62, labelHeight: 31, gapX: 3, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72230
+      {
+        id: 'aone-72230', name: 'エーワン 72230 A4 30面 53.3×25.4mm',
+        marginTop: 21.5, marginBottom: 21.5, marginLeft: 19, marginRight: 23.5,
+        labelWidth: 53.3, labelHeight: 25.4, gapX: 3.8, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72236
+      {
+        id: 'aone-72236', name: 'エーワン 72236 A4 36面 60×20mm',
+        marginTop: 12, marginBottom: 12, marginLeft: 12, marginRight: 12,
+        labelWidth: 60, labelHeight: 20, gapX: 3, gapY: 3,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72244
+      {
+        id: 'aone-72244', name: 'エーワン 72244 A4 44面 48.3×25.4mm',
+        marginTop: 8.8, marginBottom: 8.8, marginLeft: 8.4, marginRight: 8.4,
+        labelWidth: 48.3, labelHeight: 25.4, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.a-one.co.jp/product/search/detail.php?id=72265
+      {
+        id: 'aone-72265', name: 'エーワン 72265 A4 65面 38.1×21.2mm',
+        marginTop: 10.92, marginBottom: 10.48, marginLeft: 4.75, marginRight: 4.75,
+        labelWidth: 38.1, labelHeight: 21.2, gapX: 2.5, gapY: 0,
+      },
+
+      // ----- エレコム（数値は公式サイトの寸法図より） -----
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103214279.html
+      {
+        id: 'elecom-edt-tm8', name: 'エレコム EDT-TM8 A4 8面 91×55mm',
+        marginTop: 25, marginBottom: 25, marginLeft: 10, marginRight: 10,
+        labelWidth: 91, labelHeight: 55, gapX: 8, gapY: 9,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103457553.html
+      {
+        id: 'elecom-edt-tk10', name: 'エレコム EDT-TK10 A4 10面 86.4×50.8mm',
+        marginTop: 21.2, marginBottom: 21.8, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 50.8, gapX: 0, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103071773.html
+      {
+        id: 'elecom-edt-tm12', name: 'エレコム EDT-TM12 A4 12面 86.4×42.3mm',
+        marginTop: 21.2, marginBottom: 22, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 42.3, gapX: 0, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103071780.html
+      {
+        id: 'elecom-edt-tm12r', name: 'エレコム EDT-TM12R A4 12面 83.8×42.3mm',
+        marginTop: 21.5, marginBottom: 21.5, marginLeft: 19.3, marginRight: 19.3,
+        labelWidth: 83.8, labelHeight: 42.3, gapX: 3.8, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103071797.html
+      {
+        id: 'elecom-edt-tm18', name: 'エレコム EDT-TM18 A4 18面 70×42.3mm',
+        marginTop: 21.2, marginBottom: 22, marginLeft: 0, marginRight: 0,
+        labelWidth: 70, labelHeight: 42.3, gapX: 0, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103071810.html
+      {
+        id: 'elecom-edt-tm24', name: 'エレコム EDT-TM24 A4 24面 70×33.9mm',
+        marginTop: 12.7, marginBottom: 13.1, marginLeft: 0, marginRight: 0,
+        labelWidth: 70, labelHeight: 33.9, gapX: 0, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103330405.html
+      {
+        id: 'elecom-edt-fba24100', name: 'エレコム EDT-FBA24100 A4 24面 66×33.9mm',
+        marginTop: 12.9, marginBottom: 12.9, marginLeft: 6, marginRight: 6,
+        labelWidth: 66, labelHeight: 33.9, gapX: 0, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103352575.html
+      {
+        id: 'elecom-edt-tmqn30', name: 'エレコム EDT-TMQN30 A4 30面 53.3×25.4mm',
+        marginTop: 21.5, marginBottom: 21.5, marginLeft: 19, marginRight: 23.5,
+        labelWidth: 53.3, labelHeight: 25.4, gapX: 3.8, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103071834.html
+      {
+        id: 'elecom-edt-tm44', name: 'エレコム EDT-TM44 A4 44面 48.3×25.4mm',
+        marginTop: 8.8, marginBottom: 8.8, marginLeft: 8.4, marginRight: 8.4,
+        labelWidth: 48.3, labelHeight: 25.4, gapX: 0, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103214286.html
+      {
+        id: 'elecom-edt-tm65r', name: 'エレコム EDT-TM65R A4 65面 38.1×21.17mm',
+        marginTop: 10.9, marginBottom: 10.9, marginLeft: 4.67, marginRight: 4.67,
+        labelWidth: 38.1, labelHeight: 21.17, gapX: 2.54, gapY: 0,
+      },
+      // 出典: https://shop.elecom.co.jp/category/ADDRESSLABEL/4953103352643.html
+      {
+        id: 'elecom-edt-tmqn65', name: 'エレコム EDT-TMQN65 A4 65面 38.1×21.2mm',
+        marginTop: 10.92, marginBottom: 10.48, marginLeft: 4.75, marginRight: 4.75,
+        labelWidth: 38.1, labelHeight: 21.2, gapX: 2.5, gapY: 0,
+      },
+
+      // ----- コクヨ（数値は公式サイトの寸法図より） -----
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/4393/
+      {
+        id: 'kokuyo-kpc-e1081-20n', name: 'コクヨ KPC-E1081-20N A4 8面 97×69mm',
+        marginTop: 10.5, marginBottom: 10.5, marginLeft: 8, marginRight: 8,
+        labelWidth: 97, labelHeight: 69, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/7676/
+      {
+        id: 'kokuyo-kpc-e1101-20n', name: 'コクヨ KPC-E1101-20N A4 10面 86.4×50.8mm',
+        marginTop: 21.2, marginBottom: 21.8, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 50.8, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/7646/
+      {
+        id: 'kokuyo-kpc-e1121-20n', name: 'コクヨ KPC-E1121-20N A4 12面 86.4×42.3mm',
+        marginTop: 21.2, marginBottom: 22, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 42.3, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/9666/
+      {
+        id: 'kokuyo-kpc-e112-20', name: 'コクヨ KPC-E112-20 A4 12面 84×42mm',
+        marginTop: 22.5, marginBottom: 22.5, marginLeft: 19, marginRight: 19,
+        labelWidth: 84, labelHeight: 42, gapX: 4, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/9667/
+      {
+        id: 'kokuyo-kpc-e80187n', name: 'コクヨ KPC-E80187N A4 12面 84×42mm',
+        marginTop: 22.5, marginBottom: 22.5, marginLeft: 20, marginRight: 20,
+        labelWidth: 84, labelHeight: 42, gapX: 2, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/5471/
+      {
+        id: 'kokuyo-kpc-e80183n', name: 'コクヨ KPC-E80183N A4 12面 83.8×42.3mm',
+        marginTop: 21.6, marginBottom: 21.6, marginLeft: 19.3, marginRight: 19.3,
+        labelWidth: 83.8, labelHeight: 42.3, gapX: 3.8, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/3283/
+      {
+        id: 'kokuyo-kpc-e114-20', name: 'コクヨ KPC-E114-20 A4 14面 99.1×38.1mm',
+        marginTop: 15.15, marginBottom: 15.15, marginLeft: 4.63, marginRight: 4.63,
+        labelWidth: 99.1, labelHeight: 38.1, gapX: 2.54, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/6218/
+      {
+        id: 'kokuyo-kpc-e120-20', name: 'コクヨ KPC-E120-20 A4 20面 38×69.25mm',
+        marginTop: 10, marginBottom: 10, marginLeft: 10, marginRight: 10,
+        labelWidth: 38, labelHeight: 69.25, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/5428/
+      {
+        id: 'kokuyo-kpc-e121-20', name: 'コクヨ KPC-E121-20 A4 21面 63.5×38.1mm',
+        marginTop: 15.15, marginBottom: 15.15, marginLeft: 7.2, marginRight: 7.2,
+        labelWidth: 63.5, labelHeight: 38.1, gapX: 2.55, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/8513/
+      {
+        id: 'kokuyo-kpc-e124-20', name: 'コクヨ KPC-E124-20 A4 24面 66×35mm',
+        marginTop: 8.5, marginBottom: 8.5, marginLeft: 6, marginRight: 6,
+        labelWidth: 66, labelHeight: 35, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/7829/
+      {
+        id: 'kokuyo-kpc-e1242-20n', name: 'コクヨ KPC-E1242-20N A4 24面 66×33.9mm',
+        marginTop: 12.9, marginBottom: 12.9, marginLeft: 6, marginRight: 6,
+        labelWidth: 66, labelHeight: 33.9, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/13104/
+      {
+        id: 'kokuyo-kpc-e1301-20n', name: 'コクヨ KPC-E1301-20N A4 30面 53.3×25.4mm',
+        marginTop: 21.5, marginBottom: 21.5, marginLeft: 19, marginRight: 23.5,
+        labelWidth: 53.3, labelHeight: 25.4, gapX: 3.8, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/10079/
+      {
+        id: 'kokuyo-kpc-e1441-20n', name: 'コクヨ KPC-E1441-20N A4 44面 48.3×25.4mm',
+        marginTop: 8.8, marginBottom: 8.8, marginLeft: 8.4, marginRight: 8.4,
+        labelWidth: 48.3, labelHeight: 25.4, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.kokuyo.com/stationery/category/printer-supplies/inkjet-labels/12499/
+      {
+        id: 'kokuyo-kpc-e1651-20n', name: 'コクヨ KPC-E1651-20N A4 65面 38.1×21.2mm',
+        marginTop: 10.92, marginBottom: 10.48, marginLeft: 4.75, marginRight: 4.75,
+        labelWidth: 38.1, labelHeight: 21.2, gapX: 2.5, gapY: 0,
+      },
+
+      // ----- ヒサゴ（数値は公式サイトの寸法図より） -----
+      // 出典: https://www.hisago.co.jp/products/elm002/
+      {
+        id: 'hisago-elm002', name: 'ヒサゴ ELM002 A4 2面 210×148.5mm',
+        marginTop: 0, marginBottom: 0, marginLeft: 0, marginRight: 0,
+        labelWidth: 210, labelHeight: 148.5, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm003/
+      {
+        id: 'hisago-elm003', name: 'ヒサゴ ELM003 A4 4面 105×148.5mm',
+        marginTop: 0, marginBottom: 0, marginLeft: 0, marginRight: 0,
+        labelWidth: 105, labelHeight: 148.5, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm025/
+      {
+        id: 'hisago-elm025', name: 'ヒサゴ ELM025 A4 8面 97×69mm',
+        marginTop: 10.5, marginBottom: 10.5, marginLeft: 8, marginRight: 8,
+        labelWidth: 97, labelHeight: 69, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm006/
+      {
+        id: 'hisago-elm006', name: 'ヒサゴ ELM006 A4 10面 86.4×50.8mm',
+        marginTop: 21.2, marginBottom: 21.8, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 50.8, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm008/
+      {
+        id: 'hisago-elm008', name: 'ヒサゴ ELM008 A4 12面 86.4×42.3mm',
+        marginTop: 21.2, marginBottom: 22, marginLeft: 18.6, marginRight: 18.6,
+        labelWidth: 86.4, labelHeight: 42.3, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm027/
+      {
+        id: 'hisago-elm027', name: 'ヒサゴ ELM027 A4 14面 86.4×38.1mm',
+        marginTop: 12.5, marginBottom: 17.8, marginLeft: 19, marginRight: 18.2,
+        labelWidth: 86.4, labelHeight: 38.1, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm028/
+      {
+        id: 'hisago-elm028', name: 'ヒサゴ ELM028 A4 18面 63.5×46.5mm',
+        marginTop: 9, marginBottom: 9, marginLeft: 7.2, marginRight: 7.2,
+        labelWidth: 63.5, labelHeight: 46.5, gapX: 2.55, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm009/
+      {
+        id: 'hisago-elm009', name: 'ヒサゴ ELM009 A4 18面 70×42.3mm',
+        marginTop: 21.2, marginBottom: 22, marginLeft: 0, marginRight: 0,
+        labelWidth: 70, labelHeight: 42.3, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm020/
+      {
+        id: 'hisago-elm020', name: 'ヒサゴ ELM020 A4 21面 70×38.1mm',
+        marginTop: 14.8, marginBottom: 15.5, marginLeft: 0, marginRight: 0,
+        labelWidth: 70, labelHeight: 38.1, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm012/
+      {
+        id: 'hisago-elm012', name: 'ヒサゴ ELM012 A4 24面 66×33.9mm',
+        marginTop: 12.9, marginBottom: 12.9, marginLeft: 6, marginRight: 6,
+        labelWidth: 66, labelHeight: 33.9, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm030/
+      {
+        id: 'hisago-elm030', name: 'ヒサゴ ELM030 A4 27面 62×31mm',
+        marginTop: 9, marginBottom: 9, marginLeft: 9, marginRight: 9,
+        labelWidth: 62, labelHeight: 31, gapX: 3, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm033/
+      {
+        id: 'hisago-elm033', name: 'ヒサゴ ELM033 A4 36面 60×20mm',
+        marginTop: 12, marginBottom: 12, marginLeft: 12, marginRight: 12,
+        labelWidth: 60, labelHeight: 20, gapX: 3, gapY: 3,
+      },
+      // 出典: https://www.hisago.co.jp/products/elh048/
+      {
+        id: 'hisago-elh048', name: 'ヒサゴ ELH048 A4 40面 52.5×29.7mm',
+        marginTop: 0, marginBottom: 0, marginLeft: 0, marginRight: 0,
+        labelWidth: 52.5, labelHeight: 29.7, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm022/
+      {
+        id: 'hisago-elm022', name: 'ヒサゴ ELM022 A4 44面 48.3×25.4mm',
+        marginTop: 8.8, marginBottom: 8.8, marginLeft: 8.4, marginRight: 8.4,
+        labelWidth: 48.3, labelHeight: 25.4, gapX: 0, gapY: 0,
+      },
+      // 出典: https://www.hisago.co.jp/products/elm023/
+      {
+        id: 'hisago-elm023', name: 'ヒサゴ ELM023 A4 65面 38.1×21.2mm',
+        marginTop: 10.92, marginBottom: 10.48, marginLeft: 4.75, marginRight: 4.75,
+        labelWidth: 38.1, labelHeight: 21.2, gapX: 2.5, gapY: 0,
       },
     ];
 
@@ -389,10 +721,11 @@
       const usableWidth = PAPER_WIDTH - settings.marginLeft - settings.marginRight;
       const usableHeight = PAPER_HEIGHT - settings.marginTop - settings.marginBottom;
 
-      // 小数の計算誤差で 1 枚少なくならないよう、わずかに足してから切り捨てる
-      const epsilon = 1e-9;
-      const cols = Math.max(0, Math.floor((usableWidth + settings.gapX) / (settings.labelWidth + settings.gapX) + epsilon));
-      const rows = Math.max(0, Math.floor((usableHeight + settings.gapY) / (settings.labelHeight + settings.gapY) + epsilon));
+      // 市販品の寸法の丸め（例: 合計が 297.01mm になる製品）で 1 行少なくならないよう、
+      // 使える範囲を 0.05mm だけ広く見てから切り捨てる
+      const tolerance = 0.05;
+      const cols = Math.max(0, Math.floor((usableWidth + settings.gapX + tolerance) / (settings.labelWidth + settings.gapX)));
+      const rows = Math.max(0, Math.floor((usableHeight + settings.gapY + tolerance) / (settings.labelHeight + settings.gapY)));
 
       const positions = [];
       for (let row = 0; row < rows; row++) {
