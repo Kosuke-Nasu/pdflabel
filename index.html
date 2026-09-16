@@ -56,10 +56,23 @@
       font-size: 15px;
     }
 
-    select {
+    select,
+    input[type="search"] {
       width: 100%;
+      box-sizing: border-box;
       padding: 4px;
       font-size: 15px;
+    }
+
+    input[type="search"] {
+      margin-bottom: 8px;
+    }
+
+    /* 補足の小さな文字 */
+    .note {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: #666;
     }
 
     textarea {
@@ -106,12 +119,11 @@
   <!-- 用紙プリセット（あらかじめ登録した用紙の寸法）。選ぶと寸法の欄に値が入る -->
   <fieldset>
     <legend>用紙プリセット</legend>
-    <select id="preset">
-      <option value="custom">カスタム（手動設定）</option>
-      <option value="a4-72">A4 72面</option>
-      <option value="a4-24">A4 24面</option>
-      <option value="a4-44">A4 44面</option>
-    </select>
+    <!-- 入力した文字を含むプリセットだけを選択肢に残す -->
+    <input type="search" id="presetFilter" placeholder="絞り込み（例: エーワン 12面）">
+    <!-- 選択肢は JavaScript で PRESETS から作る -->
+    <select id="preset"></select>
+    <p id="presetCount" class="note"></p>
   </fieldset>
 
   <!-- 印字するテキスト（改行はそのまま反映する） -->
@@ -184,26 +196,34 @@
     const FONT_FILE_NAME = 'BIZUDGothic-Regular.ttf';
     const FONT_NAME = 'BIZUDGothic';
 
-    // 用紙プリセット。キーは選択肢の value と対応する（寸法はすべて mm）
-    const PRESETS = {
-      'a4-72': {
-        marginTop: 10.2, marginBottom: 10.2, marginLeft: 7.6, marginRight: 7.6,
-        labelWidth: 25.4, labelHeight: 10,
-        gapX: 2.54, gapY: 0,
-      },
-      'a4-24': {
-        marginTop: 13.5, marginBottom: 12.6, marginLeft: 6.8, marginRight: 6.8,
-        labelWidth: 64.3, labelHeight: 33.9,
-        gapX: 0, gapY: 0,
-      },
-      'a4-44': {
-        marginTop: 10.6, marginBottom: 10.6, marginLeft: 6.4, marginRight: 6.4,
-        labelWidth: 48.3, labelHeight: 25.4,
-        gapX: 0, gapY: 0,
-      },
-    };
+    // 「カスタム（手動設定）」を表す選択肢の value
+    const CUSTOM_PRESET_ID = 'custom';
 
+    // プリセットで自動設定する入力欄の id
+    const PRESET_FIELDS = ['marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'labelWidth', 'labelHeight', 'gapX', 'gapY'];
+
+    // 用紙プリセット（寸法はすべて mm）。name はドロップダウンの表示と絞り込みに使う
+    const PRESETS = [
+      {
+        id: 'a4-72', name: 'A4 72面',
+        marginTop: 10.2, marginBottom: 10.2, marginLeft: 7.6, marginRight: 7.6,
+        labelWidth: 25.4, labelHeight: 10, gapX: 2.54, gapY: 0,
+      },
+      {
+        id: 'a4-24', name: 'A4 24面',
+        marginTop: 13.5, marginBottom: 12.6, marginLeft: 6.8, marginRight: 6.8,
+        labelWidth: 64.3, labelHeight: 33.9, gapX: 0, gapY: 0,
+      },
+      {
+        id: 'a4-44', name: 'A4 44面',
+        marginTop: 10.6, marginBottom: 10.6, marginLeft: 6.4, marginRight: 6.4,
+        labelWidth: 48.3, labelHeight: 25.4, gapX: 0, gapY: 0,
+      },
+    ];
+
+    const presetFilter = document.getElementById('presetFilter');
     const presetSelect = document.getElementById('preset');
+    const presetCount = document.getElementById('presetCount');
     const createButton = document.getElementById('createButton');
     const statusText = document.getElementById('status');
 
@@ -220,28 +240,62 @@
 
     // ===== 用紙プリセット =====
 
+    // いま選ばれているプリセットの id。絞り込みで選択肢から一時的に消えても覚えておく
+    let selectedPresetId = CUSTOM_PRESET_ID;
+
+    // 比べやすい形にそろえる（全角英数字→半角、大文字→小文字、「×」→「x」）
+    function normalizeForSearch(text) {
+      return text.normalize('NFKC').toLowerCase().replace(/×/g, 'x');
+    }
+
+    // 絞り込み欄の文字を含むプリセットだけで、ドロップダウンの選択肢を作り直す
+    // 空白で区切って複数の語を入れたときは、すべての語を含むものだけを残す
+    function renderPresetOptions() {
+      const words = normalizeForSearch(presetFilter.value).split(/\s+/).filter((word) => word !== '');
+      const matched = PRESETS.filter((preset) => {
+        const name = normalizeForSearch(preset.name);
+        return words.every((word) => name.includes(word));
+      });
+
+      // 「カスタム」は絞り込みに関係なく、常に先頭に置く
+      presetSelect.replaceChildren(new Option('カスタム（手動設定）', CUSTOM_PRESET_ID));
+      for (const preset of matched) {
+        presetSelect.add(new Option(preset.name, preset.id));
+      }
+
+      // 選んでいたプリセットが残っていればそれを選ぶ。消えた場合は「カスタム」を表示する
+      const stillShown = matched.some((preset) => preset.id === selectedPresetId);
+      presetSelect.value = stillShown ? selectedPresetId : CUSTOM_PRESET_ID;
+
+      presetCount.textContent = words.length > 0
+        ? `${PRESETS.length}件中 ${matched.length}件が見つかりました`
+        : `${PRESETS.length}件`;
+    }
+
     // プリセットを選んだら、寸法の欄に値を入れる（カスタムのときは今の値をそのまま残す）
     function applyPreset() {
-      const preset = PRESETS[presetSelect.value];
+      selectedPresetId = presetSelect.value;
+      const preset = PRESETS.find((item) => item.id === selectedPresetId);
       if (!preset) {
         return;
       }
-      for (const [id, value] of Object.entries(preset)) {
-        document.getElementById(id).value = value;
+      for (const id of PRESET_FIELDS) {
+        document.getElementById(id).value = preset[id];
       }
     }
 
-    // 寸法の欄を手で変えて、選んでいるプリセットと値が違ったら「カスタム」表示に切り替える
+    // 寸法の欄を手で変えて、選んでいるプリセットと値が違ったら「カスタム」に切り替える
     function syncPresetWithInputs() {
-      const preset = PRESETS[presetSelect.value];
+      const preset = PRESETS.find((item) => item.id === selectedPresetId);
       if (!preset) {
         return;
       }
-      const matches = Object.entries(preset).every(
-        ([id, value]) => Number(document.getElementById(id).value) === value
+      const matches = PRESET_FIELDS.every(
+        (id) => Number(document.getElementById(id).value) === preset[id]
       );
       if (!matches) {
-        presetSelect.value = 'custom';
+        selectedPresetId = CUSTOM_PRESET_ID;
+        presetSelect.value = CUSTOM_PRESET_ID;
       }
     }
 
@@ -436,11 +490,13 @@
       }
     }
 
+    presetFilter.addEventListener('input', renderPresetOptions);
     presetSelect.addEventListener('change', applyPreset);
     // プリセットで変わる欄だけを見張る
-    for (const id of Object.keys(PRESETS['a4-72'])) {
+    for (const id of PRESET_FIELDS) {
       document.getElementById(id).addEventListener('input', syncPresetWithInputs);
     }
+    renderPresetOptions();
     createButton.addEventListener('click', createPdf);
     loadFont();
   </script>
