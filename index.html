@@ -56,6 +56,12 @@
       font-size: 15px;
     }
 
+    select {
+      width: 100%;
+      padding: 4px;
+      font-size: 15px;
+    }
+
     textarea {
       width: 100%;
       box-sizing: border-box;
@@ -96,6 +102,17 @@
 </head>
 <body>
   <h1>PDFラベルメーカー</h1>
+
+  <!-- 用紙プリセット（あらかじめ登録した用紙の寸法）。選ぶと寸法の欄に値が入る -->
+  <fieldset>
+    <legend>用紙プリセット</legend>
+    <select id="preset">
+      <option value="custom">カスタム（手動設定）</option>
+      <option value="a4-72">A4 72面</option>
+      <option value="a4-24">A4 24面</option>
+      <option value="a4-44">A4 44面</option>
+    </select>
+  </fieldset>
 
   <!-- 印字するテキスト（改行はそのまま反映する） -->
   <fieldset>
@@ -167,6 +184,26 @@
     const FONT_FILE_NAME = 'BIZUDGothic-Regular.ttf';
     const FONT_NAME = 'BIZUDGothic';
 
+    // 用紙プリセット。キーは選択肢の value と対応する（寸法はすべて mm）
+    const PRESETS = {
+      'a4-72': {
+        marginTop: 10.2, marginBottom: 10.2, marginLeft: 7.6, marginRight: 7.6,
+        labelWidth: 25.4, labelHeight: 10,
+        gapX: 2.54, gapY: 0,
+      },
+      'a4-24': {
+        marginTop: 13.5, marginBottom: 12.6, marginLeft: 6.8, marginRight: 6.8,
+        labelWidth: 64.3, labelHeight: 33.9,
+        gapX: 0, gapY: 0,
+      },
+      'a4-44': {
+        marginTop: 10.6, marginBottom: 10.6, marginLeft: 6.4, marginRight: 6.4,
+        labelWidth: 48.3, labelHeight: 25.4,
+        gapX: 0, gapY: 0,
+      },
+    };
+
+    const presetSelect = document.getElementById('preset');
     const createButton = document.getElementById('createButton');
     const statusText = document.getElementById('status');
 
@@ -179,6 +216,33 @@
     function showStatus(message, type = 'info') {
       statusText.textContent = message;
       statusText.className = type;
+    }
+
+    // ===== 用紙プリセット =====
+
+    // プリセットを選んだら、寸法の欄に値を入れる（カスタムのときは今の値をそのまま残す）
+    function applyPreset() {
+      const preset = PRESETS[presetSelect.value];
+      if (!preset) {
+        return;
+      }
+      for (const [id, value] of Object.entries(preset)) {
+        document.getElementById(id).value = value;
+      }
+    }
+
+    // 寸法の欄を手で変えて、選んでいるプリセットと値が違ったら「カスタム」表示に切り替える
+    function syncPresetWithInputs() {
+      const preset = PRESETS[presetSelect.value];
+      if (!preset) {
+        return;
+      }
+      const matches = Object.entries(preset).every(
+        ([id, value]) => Number(document.getElementById(id).value) === value
+      );
+      if (!matches) {
+        presetSelect.value = 'custom';
+      }
     }
 
     // ===== フォントの読み込み =====
@@ -372,6 +436,11 @@
       }
     }
 
+    presetSelect.addEventListener('change', applyPreset);
+    // プリセットで変わる欄だけを見張る
+    for (const id of Object.keys(PRESETS['a4-72'])) {
+      document.getElementById(id).addEventListener('input', syncPresetWithInputs);
+    }
     createButton.addEventListener('click', createPdf);
     loadFont();
   </script>
